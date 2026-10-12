@@ -19,5 +19,9 @@ namespace UnityNvim.Editor
 
         [MenuItem("Assets/Neovim/Regenerate Project Files", priority = 1001)]
         static void Regenerate() => SyncAll();
+
+        // greyed out unless Neovim is the selected editor (it would replace another IDE's project files)
+        [MenuItem("Assets/Neovim/Regenerate Project Files", true)]
+        static bool CanRegenerate() => NvimCodeEditor.IsSelected;
     }
 }

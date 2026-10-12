@@ -1,7 +1,7 @@
 {
   "name": "com.ruilanberg.unity-nvim",
   "displayName": "Neovim Editor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "unity": "2021.3",
   "description": "Neovim as Unity's external script editor: opens files in one nvim per project, generates .sln/.csproj for the Roslyn language server, and lets Neovim drive Unity (refresh/compile, play/stop, compiler errors and console logs).",
   "keywords": ["neovim", "nvim", "vim", "editor", "ide", "roslyn"],

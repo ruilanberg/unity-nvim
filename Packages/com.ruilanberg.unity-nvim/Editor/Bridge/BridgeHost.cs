@@ -31,8 +31,9 @@ namespace UnityNvim.Editor.Bridge
             if (!EditorProcess.IsMain)
                 return;
             ProjectInfo.Capture();
-            if (NvimSettings.BridgeEnabled)
-                Enable();
+            Refresh();
+            // switching to another editor in Preferences doesn't call us: notice it on our own
+            EditorApplication.update += WatchSelection;
             AssemblyReloadEvents.beforeAssemblyReload += () => BridgeServer.Stop(deleteEndpoint: false);
             EditorApplication.quitting += () =>
             {
@@ -41,14 +42,34 @@ namespace UnityNvim.Editor.Bridge
             };
         }
 
-        public static void Enable()
+        /// <summary>Bridge on only while Neovim is the selected editor and the bridge setting is on.</summary>
+        public static void Refresh()
+        {
+            var want = NvimSettings.BridgeEnabled && NvimCodeEditor.IsSelected;
+            if (want && !BridgeServer.Running)
+                Enable();
+            else if (!want && BridgeServer.Running)
+                Disable();
+        }
+
+        static double nextSelectionCheck;
+
+        static void WatchSelection()
+        {
+            if (EditorApplication.timeSinceStartup < nextSelectionCheck)
+                return;
+            nextSelectionCheck = EditorApplication.timeSinceStartup + 2;
+            Refresh();
+        }
+
+        static void Enable()
         {
             MainThreadQueue.Hook();
             Subscribe();
             BridgeServer.Start();
         }
 
-        public static void Disable()
+        static void Disable()
         {
             Unsubscribe();
             RestoreResponsive();

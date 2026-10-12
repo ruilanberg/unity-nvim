@@ -11,22 +11,36 @@ namespace UnityNvim.Editor
     [InitializeOnLoad]
     public sealed class NvimCodeEditor : IExternalCodeEditor
     {
-        static readonly ProjectGenerator Generator = new ProjectGenerator();
+        static ProjectGenerator generator;
+
+        // created on first use: nothing to do on machines where another editor is selected
+        static ProjectGenerator Generator => generator ??= new ProjectGenerator();
 
         static NvimCodeEditor()
         {
             if (!EditorProcess.IsMain)
                 return;
             CodeEditor.Register(new NvimCodeEditor());
-            // defines change with the build target: rebuild the projects so Roslyn sees the right #if branches
-            EditorUserBuildSettings.activeBuildTargetChanged += () =>
-            {
-                if (IsCurrent)
-                    Generator.Sync();
-            };
         }
 
-        public static bool IsCurrent => CodeEditor.CurrentEditor is NvimCodeEditor;
+        /// <summary>Defines change with the build target: rebuild the projects so Roslyn sees the right #if branches.</summary>
+        sealed class BuildTargetWatcher : UnityEditor.Build.IActiveBuildTargetChanged
+        {
+            public int callbackOrder => 0;
+
+            public void OnActiveBuildTargetChanged(BuildTarget previousTarget, BuildTarget newTarget)
+            {
+                if (IsSelected && EditorProcess.IsMain)
+                    Generator.Sync();
+            }
+        }
+
+        /// <summary>
+        /// Neovim is the External Script Editor on this machine. Everything beyond appearing in that list (bridge,
+        /// project generation, menu) is off otherwise, so teammates using Visual Studio/Rider are unaffected.
+        /// Checks the stored path, so it doesn't depend on the order editors register in.
+        /// </summary>
+        public static bool IsSelected => NvimDiscovery.IsNvimPath(CodeEditor.CurrentEditorInstallation);
 
         public static ProjectGenerator ProjectGenerator => Generator;
 
@@ -58,9 +72,8 @@ namespace UnityNvim.Editor
 
         public void SyncAll() => Generator.Sync();
 
-        public void Initialize(string editorInstallationPath)
-        {
-        }
+        /// <summary>Called when Neovim gets selected (and after domain reloads while it is).</summary>
+        public void Initialize(string editorInstallationPath) => Bridge.BridgeHost.Refresh();
 
         public bool OpenProject(string filePath = "", int line = -1, int column = -1)
         {

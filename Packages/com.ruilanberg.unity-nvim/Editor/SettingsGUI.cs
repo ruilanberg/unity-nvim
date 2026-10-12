@@ -128,10 +128,7 @@ namespace UnityNvim.Editor
             if (enabled != NvimSettings.BridgeEnabled)
             {
                 NvimSettings.BridgeEnabled = enabled;
-                if (enabled)
-                    BridgeHost.Enable();
-                else
-                    BridgeHost.Disable();
+                BridgeHost.Refresh();
             }
             NvimSettings.ResponsiveMode = EditorGUILayout.Toggle(
                 new GUIContent("Responsive while connected", "No editor throttling while nvim is connected, so background compiles start sooner."),

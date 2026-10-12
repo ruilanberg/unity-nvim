@@ -14,10 +14,12 @@ The repo holds both halves: the Neovim plugin at the root and the Unity package 
 *Window → Package Manager → + → Install package from git URL*:
 
 ```
-https://github.com/ruilanberg/unity-nvim.git?path=/Packages/com.ruilanberg.unity-nvim#v0.1.0
+https://github.com/ruilanberg/unity-nvim.git?path=/Packages/com.ruilanberg.unity-nvim#v0.1.1
 ```
 
 Then *Edit → Preferences → External Tools → External Script Editor → Neovim*.
+
+Safe for shared projects: on machines where another editor (Visual Studio, Rider…) is selected the package only adds "Neovim" to that list — no bridge, no project generation, menu disabled.
 
 ### Neovim (0.10+)
 

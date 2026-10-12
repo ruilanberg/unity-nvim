@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 — 2026-10-12
+
+- Inert unless Neovim is the selected External Script Editor: the bridge, project generation and the *Assets → Neovim* menu stay off otherwise, so teammates on Visual Studio/Rider are unaffected by the package being in the shared manifest. Switching editors turns the bridge on/off within ~2 s.
+- Use `IActiveBuildTargetChanged` instead of the obsolete `activeBuildTargetChanged` event.
+
 ## 0.1.0 — 2026-10-12
 
 First release.
