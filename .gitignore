@@ -1,0 +1,11 @@
+# Unity test project: generated
+TestProject~/[Ll]ibrary/
+TestProject~/[Tt]emp/
+TestProject~/[Ll]ogs/
+TestProject~/[Uu]ser[Ss]ettings/
+TestProject~/[Oo]bj/
+TestProject~/*.csproj
+TestProject~/*.sln
+TestProject~/.vs/
+TestProject~/compile_commands.json
+.DS_Store
